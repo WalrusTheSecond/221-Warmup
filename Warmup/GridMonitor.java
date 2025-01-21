@@ -4,30 +4,26 @@ import java.util.Scanner;
 
 public class GridMonitor implements GridMonitorInterface{
     private double[][] grid;
-    public static void main(String[] args) {
-        //Read the file & update the grid
-        String text = "sample.txt";
-        try{
-            File file = new File(text);
-        
-            Scanner fileScan = new Scanner(file);
-            String test = fileScan.nextLine();
-            System.out.println(test);
-
-            GridMonitor monitor = new GridMonitor(text);
-        } catch(FileNotFoundException e) {
-            System.out.println("File not found");
-        }
-        
-    }
 
     public GridMonitor(String fileName) throws FileNotFoundException{
+        
         File file = new File(fileName);
+        if (!file.exists()) {
+            System.out.println("File not found at: " + file.getAbsolutePath());
+            throw new FileNotFoundException("File not found: " + fileName);
+        }
         
+        System.out.println("I like turtles");
         Scanner fileScan = new Scanner(file);
-        String test = fileScan.nextLine();
-        System.out.println(test);
         
+        /*for(){
+            for(){
+
+            }
+        }
+**/
+        String test = fileScan.nextLine();
+        System.out.println("I like turtles");
     }
 
 
