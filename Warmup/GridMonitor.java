@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GridMonitor implements GridMonitorInterface{
@@ -7,33 +8,47 @@ public class GridMonitor implements GridMonitorInterface{
 
     public GridMonitor(String fileName) throws FileNotFoundException{
         
-        File file = new File(fileName);
+        File file = new File("Warmup\\" + fileName);
+        System.out.println("Looking for file at: " + file.getAbsolutePath());
         if (!file.exists()) {
             System.out.println("File not found at: " + file.getAbsolutePath());
-            throw new FileNotFoundException("File not found: " + fileName);
+            throw new FileNotFoundException();
         }
-        
-        System.out.println("I like turtles");
-        Scanner fileScan = new Scanner(file);
-        
-        /*for(){
-            for(){
+        else {
+            System.out.println("File found at: " + file.getAbsolutePath());
+        }
 
+        ArrayList<double[]> gridList = new ArrayList<>();
+        Scanner scanner = new Scanner(file);
+
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+            if (!line.isEmpty()) {
+                String[] values = line.split("\\s+"); // Split by spaces
+                double[] row = new double[values.length];
+                for (int i = 0; i < values.length; i++) {
+                    row[i] = Double.parseDouble(values[i]); // Convert to double
+                }
+                gridList.add(row); // Add row to the list
             }
         }
-**/
-        String test = fileScan.nextLine();
-        System.out.println("I like turtles");
+
+        scanner.close();
+
+        // Convert ArrayList to 2D array
+        grid = new double[gridList.size()][];
+        for (int i = 0; i < gridList.size(); i++) {
+            grid[i] = gridList.get(i);
+        }
+
     }
+        
+    
 
 
-    /**
-	 * Returns the original base grid, as read from file.
-	 * 
-	 * @return base grid
-	 */
+  
 	public double[][] getBaseGrid(){
-        return null;
+        return grid;
     }
 
     /**
@@ -45,6 +60,32 @@ public class GridMonitor implements GridMonitorInterface{
 	 * @return grid containing the sum of adjacent positions
 	 */
 	public double[][] getSurroundingSumGrid() {
+        int rows = grid.length;
+        int cols = grid[0].length;
+        double above;
+        double right;
+        double left;
+        double below;
+        double sum;
+        double[][] sumGrid = new double[rows][cols];
+        for(int i = 0; i<sumGrid.length; i++){
+            for(int j = 0; j<sumGrid.length; j++) {
+                if(i == 0 && j == 0){
+                    above = grid[i][j];
+                    left = grid[i][j];   
+                }
+                above = grid[i][j + 1];
+                right = grid[i + 1][j];
+                below = grid[i][j - 1];
+                left = grid[i - 1][j]; 
+                sum = above + right + left + below;
+                sumGrid[i][j] = sum;
+            }
+        }
+        //Find sum of the surrounding elements
+        //Set that spot in new grid to be the sum
+
+
         return null;
     }
 
@@ -94,5 +135,17 @@ public class GridMonitor implements GridMonitorInterface{
 	 */
 	public String toString(){
         return null;
+    }
+
+    /**
+     * Testing Method
+     */
+    private void printGrid(double[][] grid) {
+        for(double[] row : grid) {
+            for(double val : row) {
+                System.out.print(val + " ");
+            }
+            System.out.println();
+        }
     }
 }
