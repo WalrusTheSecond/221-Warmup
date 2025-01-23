@@ -17,7 +17,7 @@ public class GridMonitor implements GridMonitorInterface{
 
     public GridMonitor(String fileName) throws FileNotFoundException{
         
-        File file = new File("Warmup\\" + fileName);
+        File file = new File(fileName);
         System.out.println("Looking for file at: " + file.getAbsolutePath());
         if (!file.exists()) {
             System.out.println("File not found at: " + file.getAbsolutePath());
@@ -224,7 +224,7 @@ public class GridMonitor implements GridMonitorInterface{
                     returnString += "Cell (" + i + " " + j + ") at Risk";
                 }
             }
-
+        }
         return returnString;
     }
 
