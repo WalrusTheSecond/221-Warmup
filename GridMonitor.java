@@ -2,13 +2,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
-/*
- * Things to do
- * Fix Encapsulation
- * Fix File finding issue
- * Finish Methods
- */
-
 
 
 
@@ -41,6 +34,7 @@ public class GridMonitor implements GridMonitorInterface{
                 gridList.add(row); // Add row to the list
             }
         }
+        System.out.println(gridList);
 
         scanner.close();
 
@@ -49,7 +43,7 @@ public class GridMonitor implements GridMonitorInterface{
         for (int i = 0; i < gridList.size(); i++) {
             grid[i] = gridList.get(i);
         }
-
+        printGrid(grid);
     }
         
     
@@ -57,7 +51,14 @@ public class GridMonitor implements GridMonitorInterface{
 
   
 	public double[][] getBaseGrid(){
-        return grid;
+        double[][] copy = new double[grid.length][grid[0].length];
+        for(int i = 0; i < copy.length; i++){
+            copy[i] = new double[grid[i].length];
+            for(int j = 0; j < copy[i].length; j++){
+                copy[i][j] = grid[i][j];
+            }
+        }
+        return copy;
     }
 
     /**
@@ -69,34 +70,33 @@ public class GridMonitor implements GridMonitorInterface{
 	 * @return grid containing the sum of adjacent positions
 	 */
 	public double[][] getSurroundingSumGrid() {
-        int rows = grid.length;
-        int cols = grid[0].length;
         double above;
         double right;
         double left;
         double below;
         double sum;
-        double[][] sumGrid = new double[rows][cols];
+        double[][] sumGrid = new double[grid.length][grid.length];
         for(int i = 0; i<sumGrid.length; i++){
-            for(int j = 0; j<sumGrid.length; j++) {
+            sumGrid[i] = new double[grid[i].length];
+            for(int j = 0; j<sumGrid[i].length; j++) {
                 //check each direction
                 try{
-                    above = grid[i][j + 1];
+                    above = grid[i - 1][j];
                 }catch(IndexOutOfBoundsException e){
                     above = grid[i][j];
                 }
                 try{
-                    right = grid[i + 1][j];
+                    right = grid[i][j + 1];
                 }catch(IndexOutOfBoundsException e){
                     right = grid[i][j];
                 }
                 try{
-                    below = grid[i][j - 1];
+                    below = grid[i + 1][j];
                 }catch(IndexOutOfBoundsException e){
                     below = grid[i][j];
                 }
                 try{
-                    left = grid[i - 1][j];
+                    left = grid[i][j - 1];
                 }catch(IndexOutOfBoundsException e){
                     left = grid[i][j];
                 }
@@ -104,8 +104,6 @@ public class GridMonitor implements GridMonitorInterface{
                 sumGrid[i][j] = sum;
             }
         }
-        //Find sum of the surrounding elements
-        //Set that spot in new grid to be the sum
         return sumGrid;
     }
 
@@ -119,7 +117,7 @@ public class GridMonitor implements GridMonitorInterface{
 	public double[][] getSurroundingAvgGrid(){
         double[][] avgGrid = getSurroundingSumGrid();
         for(int i = 0; i<avgGrid.length; i++){
-            for(int j = 0; j<avgGrid.length; j++) {
+            for(int j = 0; j<avgGrid[i].length; j++) {
                 if(avgGrid[i][j] == 0 ){
                     avgGrid[i][j] = 0;
                 }
@@ -143,7 +141,7 @@ public class GridMonitor implements GridMonitorInterface{
 	public double[][] getDeltaGrid(){
         double[][] deltGrid = getSurroundingAvgGrid();
         for(int i = 0; i<deltGrid.length; i++){
-            for(int j = 0; j<deltGrid.length; j++) {
+            for(int j = 0; j<deltGrid[i].length; j++) {
                 if(deltGrid[i][j] == 0 ){
                     deltGrid[i][j] = 0;
                 }
@@ -177,7 +175,7 @@ public class GridMonitor implements GridMonitorInterface{
             double[][] avgGrid = getSurroundingAvgGrid();
             double[][] delGrid = getDeltaGrid();
             for(int i = 0; i<danGrid.length; i++){
-                for(int j = 0; j<danGrid.length; j++) {
+                for(int j = 0; j<danGrid[i].length; j++) {
                     if((grid[i][j] < avgGrid[i][j] - delGrid[i][j]) || (grid[i][j] > avgGrid[i][j] + delGrid[i][j])){
                         danGrid[i][j] = true;
                     }
@@ -231,7 +229,8 @@ public class GridMonitor implements GridMonitorInterface{
     /**
      * Testing Method
      */
-    private void printGrid(double[][] grid) {
+    public void printGrid(double[][] grid) {
+        System.out.println("Printing Grid:");
         for(double[] row : grid) {
             for(double val : row) {
                 System.out.print(val + " ");
@@ -239,6 +238,17 @@ public class GridMonitor implements GridMonitorInterface{
             System.out.println();
         }
 
-        System.out.println(toString());
+        //System.out.println(toString());
+    }
+    public void printBooleanGrid(boolean[][] grid) {
+        System.out.println("Printing Grid:");
+        for(boolean[] row : grid) {
+            for(boolean val : row) {
+                System.out.print(val + " ");
+            }
+            System.out.println();
+        }
+
+        //System.out.println(toString());
     }
 }
