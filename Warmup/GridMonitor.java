@@ -2,6 +2,15 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
+/*
+ * Things to do
+ * Fix Encapsulation
+ * Fix File finding issue
+ * Finish Methods
+ */
+
+
+
 
 public class GridMonitor implements GridMonitorInterface{
     private double[][] grid;
@@ -70,23 +79,34 @@ public class GridMonitor implements GridMonitorInterface{
         double[][] sumGrid = new double[rows][cols];
         for(int i = 0; i<sumGrid.length; i++){
             for(int j = 0; j<sumGrid.length; j++) {
-                if(i == 0 && j == 0){
+                //check each direction
+                try{
+                    above = grid[i][j + 1];
+                }catch(IndexOutOfBoundsException e){
                     above = grid[i][j];
-                    left = grid[i][j];   
                 }
-                above = grid[i][j + 1];
-                right = grid[i + 1][j];
-                below = grid[i][j - 1];
-                left = grid[i - 1][j]; 
+                try{
+                    right = grid[i + 1][j];
+                }catch(IndexOutOfBoundsException e){
+                    right = grid[i][j];
+                }
+                try{
+                    below = grid[i][j - 1];
+                }catch(IndexOutOfBoundsException e){
+                    below = grid[i][j];
+                }
+                try{
+                    left = grid[i - 1][j];
+                }catch(IndexOutOfBoundsException e){
+                    left = grid[i][j];
+                }
                 sum = above + right + left + below;
                 sumGrid[i][j] = sum;
             }
         }
         //Find sum of the surrounding elements
         //Set that spot in new grid to be the sum
-
-
-        return null;
+        return sumGrid;
     }
 
     /**
@@ -97,7 +117,18 @@ public class GridMonitor implements GridMonitorInterface{
 	 * @return grid containing the average of adjacent positions
 	 */
 	public double[][] getSurroundingAvgGrid(){
-        return null;
+        double[][] avgGrid = getSurroundingSumGrid();
+        for(int i = 0; i<avgGrid.length; i++){
+            for(int j = 0; j<avgGrid.length; j++) {
+                if(avgGrid[i][j] == 0 ){
+                    avgGrid[i][j] = 0;
+                }
+                else{
+                    avgGrid[i][j] = avgGrid[i][j] / 4.0;
+                }
+            }
+        }
+        return avgGrid;
     }
 
     /**
@@ -110,7 +141,18 @@ public class GridMonitor implements GridMonitorInterface{
 	 * @return grid containing the maximum delta from average of adjacent positions
 	 */
 	public double[][] getDeltaGrid(){
-        return null;
+        double[][] deltGrid = getSurroundingAvgGrid();
+        for(int i = 0; i<deltGrid.length; i++){
+            for(int j = 0; j<deltGrid.length; j++) {
+                if(deltGrid[i][j] == 0 ){
+                    deltGrid[i][j] = 0;
+                }
+                else{
+                    deltGrid[i][j] = deltGrid[i][j] / 2.0;
+                }
+            }
+        }
+        return deltGrid;
     }
 
     /**
@@ -125,16 +167,65 @@ public class GridMonitor implements GridMonitorInterface{
 	 * location is in danger of exploding
 	 */
 	public boolean[][] getDangerGrid(){
-        return null;
+            boolean[][] danGrid = new boolean[grid.length][grid[0].length];
+            //get surrounding avg grid
+            //get delta grid
+
+            //Check if grid is less than or greater than avg grid +- delta value
+            //Set spot = true
+            //else spot = false
+            double[][] avgGrid = getSurroundingAvgGrid();
+            double[][] delGrid = getDeltaGrid();
+            for(int i = 0; i<danGrid.length; i++){
+                for(int j = 0; j<danGrid.length; j++) {
+                    if((grid[i][j] < avgGrid[i][j] - delGrid[i][j]) || (grid[i][j] > avgGrid[i][j] + delGrid[i][j])){
+                        danGrid[i][j] = true;
+                    }
+                    else danGrid[i][j] = false;
+                }
+            }
+        return danGrid;
     }
 
     /**
 	 * Returns a well-formatted, clearly labeled String with useful information
-	 * about the GridMonitor. One or more of the grids would be useful as would
+	 * about the GridMonitor.
+     *  
+     * One or more of the grids would be useful 
+     * as would
 	 * information about which cells (if any) are at risk.
 	 */
 	public String toString(){
-        return null;
+        String returnString = "Constitution-class Starship Status Report:\nCell Value Grid: Current Cell Value Status";
+        for(double[] row : grid){
+            for(double val : row){
+                returnString += val + " ";
+            }
+            returnString += "\n";
+        }
+        returnString += "\n" + "Danger Grid: Current Danger Cell Status";
+        boolean danGrid[][] = getDangerGrid();
+
+        for(boolean[] row2 : danGrid){
+            for(boolean val2 : row2){
+                if(val2 == true){
+                    returnString += "Danger ";
+                }
+                else{
+                    returnString += "Safe ";
+                }
+            }
+            returnString += "\n";
+        }
+        returnString += "\n" + "Cells at Risk: \n";
+        for(int i = 0; i < danGrid.length; i++){
+            for(int j = 0; j < danGrid.length; j++){
+                if(danGrid[i][j] == true){
+                    returnString += "Cell (" + i + " " + j + ") at Risk";
+                }
+            }
+
+        return returnString;
     }
 
     /**
@@ -147,5 +238,7 @@ public class GridMonitor implements GridMonitorInterface{
             }
             System.out.println();
         }
+
+        System.out.println(toString());
     }
 }
