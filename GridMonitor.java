@@ -147,7 +147,7 @@ public class GridMonitor implements GridMonitorInterface {
         }
         returnString += "\n" + "Cells at Risk: \n";
         for (int i = 0; i < danGrid.length; i++) {
-            for (int j = 0; j < danGrid.length; j++) {
+            for (int j = 0; j < danGrid[0].length; j++) {
                 if (danGrid[i][j] == true) {
                     returnString += "Cell (" + i + " " + j + ") is at Risk\n";
                 }
